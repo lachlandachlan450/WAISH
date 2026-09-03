@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Warwick AI Safety Hub</title>
+  <meta name="description" content="WAISH is the University of Warwick's student group for technical AI safety: reading groups, an ARENA-based bootcamp, talks and research projects.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&family=Public+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="inner">
+    <a class="wordmark" href="index.html">WAISH<span>.</span></a>
+    <nav class="site-nav" aria-label="Main">
+      <a href="index.html" aria-current="page">About</a>
+      <a href="people.html">People</a>
+      <a href="https://waish.substack.com">Blog</a>
+      <a href="apply.html">Apply</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <!-- Decorative "alignment field": tick marks that mostly agree, a few that don't -->
+  <svg class="field" id="alignment-field" aria-hidden="true" preserveAspectRatio="xMidYMid slice"></svg>
+  <div class="inner">
+    <h1>Making advanced AI go well, from Warwick</h1>
+    <p>The Warwick AI Safety Hub is a student community working on the technical and strategic problems of making powerful AI systems safe. We run reading groups, a hands-on upskilling bootcamp, and research projects.</p>
+    <a class="button" href="apply.html">Apply to the bootcamp</a>
+    <a class="button quiet" href="contact.html">Get in touch</a>
+  </div>
+</section>
+
+<main>
+  <h2>What we do</h2>
+  <div class="activities">
+    <div class="activity">
+      <h3>Technical bootcamp</h3>
+      <p>A termly upskilling programme built on the ARENA curriculum: transformer internals, mechanistic interpretability, RL and evals, taught through weekly coding sessions.</p>
+    </div>
+    <div class="activity">
+      <h3>Research projects</h3>
+      <p>Small teams work on open problems and hackathon projects, with the aim of producing publishable write-ups and building genuine research experience.</p>
+    </div>
+    <div class="activity">
+      <h3>Talks and socials</h3>
+      <p>Guest speakers from safety labs and academia, plus regular socials — a low-commitment way to meet the community.</p>
+    </div>
+  </div>
+
+  <h2>Why AI safety</h2>
+  <p>AI capabilities are advancing quickly, and the field of people working to make these systems safe, interpretable and controllable is still small. Students with strong mathematical and technical backgrounds are unusually well placed to contribute — and Warwick has plenty of them.</p>
+  <p>You don't need prior machine learning experience to get involved. The bootcamp starts from foundations, and our talks and socials are open to anyone curious about the problems.</p>
+</main>
+
+<footer class="site-footer">
+  <div class="inner">
+    <div>
+      <a class="wordmark" href="index.html" style="color:#f0e6f8">WAISH<span>.</span></a>
+      <p class="fine">Warwick AI Safety Hub — a student group at the University of Warwick. Not an official university body.</p>
+    </div>
+    <nav class="site-nav" aria-label="Footer">
+      <a href="index.html">About</a>
+      <a href="people.html">People</a>
+      <a href="https://waish.substack.com">Blog</a>
+      <a href="apply.html">Apply</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+/* Draws the hero's tick-mark field: most marks share one direction,
+   a handful are misaligned. Purely decorative. */
+(function () {
+  var svg = document.getElementById("alignment-field");
+  if (!svg) return;
+  var W = 1200, H = 480, gap = 46, len = 14;
+  svg.setAttribute("viewBox", "0 0 " + W + " " + H);
+  var ns = "http://www.w3.org/2000/svg";
+  for (var y = gap / 2; y < H; y += gap) {
+    for (var x = gap / 2; x < W; x += gap) {
+      var stray = Math.random() < 0.07;
+      var angle = stray ? Math.random() * 180 : -18 + (Math.random() * 10 - 5);
+      var line = document.createElementNS(ns, "line");
+      line.setAttribute("x1", -len / 2); line.setAttribute("y1", 0);
+      line.setAttribute("x2", len / 2);  line.setAttribute("y2", 0);
+      line.setAttribute("transform", "translate(" + x + " " + y + ") rotate(" + angle + ")");
+      line.setAttribute("stroke", stray ? "#b99a45" : "#8a6aa6");
+      line.setAttribute("stroke-width", stray ? 2.5 : 1.5);
+      line.setAttribute("stroke-linecap", "round");
+      svg.appendChild(line);
+    }
+  }
+})();
+</script>
+
+</body>
+</html>
