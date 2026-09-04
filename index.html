@@ -74,14 +74,24 @@
 </footer>
 
 <script>
-/* Draws the hero's tick-mark field: most marks share one direction,
-   a handful are misaligned. Purely decorative. */
+/* Hero tick-mark field. Marks near the pointer turn gold and rotate,
+   then ease back when it moves away. Decorative only. */
 (function () {
   var svg = document.getElementById("alignment-field");
-  if (!svg) return;
+  var hero = document.querySelector(".hero");
+  if (!svg || !hero) return;
+
   var W = 1200, H = 480, gap = 46, len = 14;
+  var GOLD = "#b99a45", MUTED = "#8a6aa6";
+  var TOUCH = 42;        /* marks this close to the pointer always react (SVG units) */
+  var RADIUS = 120;      /* a few "keen" marks also react out to this distance */
+  var KEEN = 0.18;       /* fraction of marks that are keen */
+  var EXTRA_TURN = 38;   /* max additional rotation in degrees */
+
   svg.setAttribute("viewBox", "0 0 " + W + " " + H);
   var ns = "http://www.w3.org/2000/svg";
+  var marks = [];
+
   for (var y = gap / 2; y < H; y += gap) {
     for (var x = gap / 2; x < W; x += gap) {
       var stray = Math.random() < 0.07;
@@ -89,13 +99,56 @@
       var line = document.createElementNS(ns, "line");
       line.setAttribute("x1", -len / 2); line.setAttribute("y1", 0);
       line.setAttribute("x2", len / 2);  line.setAttribute("y2", 0);
-      line.setAttribute("transform", "translate(" + x + " " + y + ") rotate(" + angle + ")");
-      line.setAttribute("stroke", stray ? "#b99a45" : "#8a6aa6");
-      line.setAttribute("stroke-width", stray ? 2.5 : 1.5);
+      line.style.stroke = stray ? GOLD : MUTED;
+      line.style.strokeWidth = stray ? 2.5 : 1.5;
       line.setAttribute("stroke-linecap", "round");
+      line.style.transform = "translate(" + x + "px," + y + "px) rotate(" + angle + "deg)";
+      line.style.transition = "transform .35s ease, stroke .5s ease, stroke-width .5s ease";
       svg.appendChild(line);
+      marks.push({ el: line, x: x, y: y, angle: angle, stray: stray, keen: Math.random() < KEEN });
     }
   }
+
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  var pt = svg.createSVGPoint(), raf = null, pending = null;
+
+  function apply(e) {
+    pt.x = e.clientX; pt.y = e.clientY;
+    var ctm = svg.getScreenCTM();
+    if (!ctm) return;
+    var p = pt.matrixTransform(ctm.inverse());
+    for (var i = 0; i < marks.length; i++) {
+      var m = marks[i];
+      var d = Math.hypot(m.x - p.x, m.y - p.y);
+      var reach = m.keen ? RADIUS : TOUCH;
+      if (d < reach) {
+        var t = 1 - d / reach;
+        m.el.style.transform = "translate(" + m.x + "px," + m.y + "px) rotate(" + (m.angle + t * EXTRA_TURN) + "deg)";
+        m.el.style.stroke = GOLD;
+        m.el.style.strokeWidth = 2.5;
+      } else if (!m.stray) {
+        m.el.style.transform = "translate(" + m.x + "px," + m.y + "px) rotate(" + m.angle + "deg)";
+        m.el.style.stroke = MUTED;
+        m.el.style.strokeWidth = 1.5;
+      }
+    }
+  }
+
+  hero.addEventListener("pointermove", function (e) {
+    pending = e;
+    if (raf) return;
+    raf = requestAnimationFrame(function () { raf = null; if (pending) apply(pending); });
+  });
+
+  hero.addEventListener("pointerleave", function () {
+    for (var i = 0; i < marks.length; i++) {
+      var m = marks[i];
+      m.el.style.transform = "translate(" + m.x + "px," + m.y + "px) rotate(" + m.angle + "deg)";
+      m.el.style.stroke = m.stray ? GOLD : MUTED;
+      m.el.style.strokeWidth = m.stray ? 2.5 : 1.5;
+    }
+  });
 })();
 </script>
 
